@@ -5,6 +5,8 @@ const db = require('./db.js');
 const router = express.Router();
 
 
+// YOU DON'T NEED /API/POSTS WHEN USING ROUTER...IT CHANGES THE ADDRESS COMPLETELY //
+
 router.get('/', (req, res) => {
     db 
     .find()
@@ -19,7 +21,8 @@ router.get('/', (req, res) => {
 
 
 
-router.post('/api/posts', (req, res) => {
+router.post('/', (req, res) => {
+    const postInfo = req.body;
     console.log('request body:', postInfo);
 
     db
