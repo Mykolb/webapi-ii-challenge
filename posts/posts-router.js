@@ -26,9 +26,9 @@ router.get('/:id', (req, res) => {
     const postId = req.params.id;
     console.log('request:')
 
-    // if (!res.body.id === 0) {
-    //     res.status(404).json({ message: "The post with the specified ID does not exist." })
-    // }
+    if (!postId) {
+        res.status(404).json({ message: "The post with the specified ID does not exist." })
+    }
     db 
     .findById(postId)
     .then(posts => {
@@ -44,7 +44,7 @@ router.get('/:id', (req, res) => {
 //POST
 router.post('/', (req, res) => {
     const postInfo = req.body;
-    console.log('request body:', postInfo);
+    console.log('postInfo');
 
     if (!req.body.contents || !req.body.title) {
         res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
@@ -56,11 +56,29 @@ router.post('/', (req, res) => {
         res.status(200).json(post);
     })
     .catch(err => {
-        res.status(500).useChunkedEncodingByDefault({ error: err, message: 'There was an error while saving the post to the database'})
+        res.status(500).json({ error: err, message: 'There was an error while saving the post to the database'})
     })
 })
 
 
+//DELETE
+router.delete('/:id', (req, res) => {
+    const postId = req.params.id;
+
+    if (!postId) {
+        res.status(404).json({ message: "The post with the specified ID does not exist." })
+    }
+
+    db
+    .remove(postId)
+    .then(deleted => {
+        res.status(201).end();
+    })
+    .catch(error => {
+        res.status(500).json({ error: err, message: "The post could not be removed." })
+    })
+
+})
 
 
 
