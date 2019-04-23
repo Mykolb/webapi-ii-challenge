@@ -80,6 +80,31 @@ router.delete('/:id', (req, res) => {
 
 })
 
+//PUT 
+router.put('/:id', (req, res) => {
+    const postId = req.params.id;
+    const postInfo = req.body;
+    console.log('request body:', postInfo);
+
+    if (!postId) {
+        res.status(404).json({ message: "The post with the specified ID does not exist."  })
+    } else {
+
+    } if (!req.body.contents || !req.body.title) {
+        res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+    } 
+
+    db
+    .update(postId, postInfo)
+    .then(posts => {
+        res.status(200).json(posts);
+    })
+    .catch(error => {
+        res.status(500).json({ error: err, message: "The post information could not be modified."})
+    })
+
+})
+
 
 
 
