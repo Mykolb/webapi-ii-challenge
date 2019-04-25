@@ -26,19 +26,23 @@ router.get('/:id', (req, res) => {
     const postId = req.params.id;
     console.log('request:')
 
-    if (!postId) {
-        res.status(404).json({ message: "The post with the specified ID does not exist." })
-    }
     db 
     .findById(postId)
-    .then(posts => {
-        res.status(201).json(posts);
-    })
+    .then(id => {
+        if (id) {
+            db
+            .findById(postId)
+            .then(findId => {
+        res.status(201).json(findId);
+    });
+} else {
+    res.status(404).json({error: err, message: 'The post with the specified ID does not exist.'})
+    }
+})
     .catch(err => {
         res.status(500).json({ error: err, message: 'The posts information could not be retrieved.'})
-    })
+    });
 })
-
 
 
 //POST
@@ -65,41 +69,40 @@ router.post('/', (req, res) => {
 router.delete('/:id', (req, res) => {
     const postId = req.params.id;
 
-    if (!postId) {
-        res.status(404).json({ message: "The post with the specified ID does not exist." })
-    }
-
     db
     .remove(postId)
-    .then(deleted => {
-        res.status(201).end();
+    .then(post => {
+      if (post === 0) {
+        res.status(404).json({ error: err, message:'The post with the specified ID does not exist'})
+      }
+          res.status(201).end();   
     })
-    .catch(error => {
+    .catch(err => {
         res.status(500).json({ error: err, message: "The post could not be removed." })
     })
 
 })
 
 //PUT 
+//Like this method the best 
 router.put('/:id', (req, res) => {
     const postId = req.params.id;
     const postInfo = req.body;
     console.log('request body:', postInfo);
 
-    if (!postId) {
-        res.status(404).json({ message: "The post with the specified ID does not exist."  })
-    } else {
-
-    } if (!req.body.contents || !req.body.title) {
+     if (!req.body.contents || !req.body.title) {
         res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
     } 
 
     db
     .update(postId, postInfo)
     .then(posts => {
+        if(posts === 0) {
+            res.status(404).json({ message: "The post with the specified ID does not exist."  })
+        }
         res.status(200).json(posts);
     })
-    .catch(error => {
+    .catch(err => {
         res.status(500).json({ error: err, message: "The post information could not be modified."})
     })
 
